@@ -1,0 +1,38 @@
+File data/train.tsv is already downloaded.
+File data/validation.tsv is already downloaded.
+File data/test.tsv is already downloaded.
+File data/text_prepare_tests.tsv is already downloaded.
+[nltk_data] Downloading package stopwords to /Users/Elio/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+[nltk_data] Downloading package punkt to /Users/Elio/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+
+Basic tests are passed.
+
+Counting words and tags :
+1.0 %
+2.0 %
+3.0 %
+4.0 %
+5.0 %
+...
+95.0 %
+96.0 %
+97.0 %
+98.0 %
+99.0 %
+100.0 %
+Finished
+
+Most common Tags: javascript,c#,java
+Most common Words: using,c,php
+
+Basic tests are passed.
+
+X_train shape  (100000, 5000)
+X_val shape  (30000, 5000)
+X_test shape  (20000, 5000)
+
+BagOfWords :  6
+
+python3 assignment1.py  1227.74s user 58.21s system 99% cpu 21:35.73 total
