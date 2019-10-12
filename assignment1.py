@@ -23,7 +23,7 @@ def read_data(filename):
     data['tags'] = data['tags'].apply(literal_eval)
     return data
 
-train = read_data('data/train.trunc.tsv')
+train = read_data('data/train.tsv')
 validation = read_data('data/validation.tsv')
 test = pd.read_csv('data/test.tsv', sep='\t')
 
