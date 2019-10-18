@@ -8,9 +8,11 @@ import nltk
 import requests
 import pickle
 import os.path
+import sklearn
 from bs4 import BeautifulSoup
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer
 
 # nltk.download('stopwords')
 
@@ -62,7 +64,8 @@ def cleanText(text):
     # text = re.sub(r'&#\d{2,4};', '', text) #Remove HTML Numbers
     text = re.sub(r'-', ' ', text) #Replace - by space
     text = re.sub(r'\d+', '', text) #Remove digits
-    text = re.sub(r'[^\w\s]','', text) #Remove punctuation
+    text = re.sub(r'[^\w\s\'’]','', text) #Remove punctuation without apostrophe
+    text = re.sub(r'[\'’]', '\'', text) #Replace ’ by '
     text = re.sub(r'[\n]', ' ', text) #Replace \n by space
     text = re.sub(r'[\t]', '', text) #Remove \t
 
@@ -99,10 +102,21 @@ def main():
         print("Backup file existing, importing it.")
         pages_dict = unpickleFile(backup_file)
 
-    for url,content in pages_dict.items():
+    #Cleaning Text and regroup it in one corpus
+    corpus = []
+    for url, content in pages_dict.items():
         print("Treating URL :", url)
-        pages_dict[url] = cleanText(content)
-    print(pages_dict)
+        content = cleanText(content)
+        pages_dict[url] = content
+        for content_item in content:
+            corpus.append(content_item)
+
+    vec = CountVectorizer(min_df=5, max_df=0.9, ngram_range=(1, 2), token_pattern='(\S+)').fit(corpus)
+    bag_of_words = vec.transform(corpus)
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq = sorted(words_freq, key=lambda x: x[1], reverse=True)
+    print(words_freq)
 
 if __name__ == "__main__":
     main()
