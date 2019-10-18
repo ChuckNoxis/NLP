@@ -79,14 +79,14 @@ def cleanText(text):
 
 def createBackup(url_list, backup_file):
     pages_dict = {
-        url_list[0]: cleanText(getDivContent(downloadURL(url_list[0]))),
-        url_list[1]: cleanText(getDivContent(downloadURL(url_list[1]))),
-        url_list[2]: cleanText(getDivContent(downloadURL(url_list[2]))),
-        url_list[3]: cleanText(getDivContent(downloadURL(url_list[3]))),
-        url_list[4]: cleanText(getDivContent(downloadURL(url_list[4])))
+        url_list[0]: getDivContent(downloadURL(url_list[0])),
+        url_list[1]: getDivContent(downloadURL(url_list[1])),
+        url_list[2]: getDivContent(downloadURL(url_list[2])),
+        url_list[3]: getDivContent(downloadURL(url_list[3])),
+        url_list[4]: getDivContent(downloadURL(url_list[4]))
     }
     pickleFile(backup_file, pages_dict)
-    print("File ", backup_file, " created.")
+    print("File", backup_file, "created.")
     return pages_dict
 
 def main():
@@ -98,6 +98,10 @@ def main():
     else:
         print("Backup file existing, importing it.")
         pages_dict = unpickleFile(backup_file)
+
+    for url,content in pages_dict.items():
+        print("Treating URL :", url)
+        pages_dict[url] = cleanText(content)
     print(pages_dict)
 
 if __name__ == "__main__":
