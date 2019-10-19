@@ -60,8 +60,6 @@ def cleanText(text):
     print("Cleaning Text")
     text = text.lower() #Lowercase Text
     text = re.sub(r'<\/?[\w ="-:;]*>', '', text) #Remove HTML Tags
-    # text = re.sub(r'&#8217;',' \'', text) #Transform apostrophes
-    # text = re.sub(r'&#\d{2,4};', '', text) #Remove HTML Numbers
     text = re.sub(r'-', ' ', text) #Replace - by space
     text = re.sub(r'\d+', '', text) #Remove digits
     text = re.sub(r'[^\w\s\'’]','', text) #Remove punctuation without apostrophe
@@ -111,12 +109,16 @@ def main():
         for content_item in content:
             corpus.append(content_item)
 
-    vec = CountVectorizer(min_df=5, max_df=0.9, ngram_range=(1, 2), token_pattern='(\S+)').fit(corpus)
+    vec = CountVectorizer(min_df=5,
+                          max_df=0.9,
+                          ngram_range=(1, 2),
+                          token_pattern='(\S+)').fit(corpus)
     bag_of_words = vec.transform(corpus)
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq = sorted(words_freq, key=lambda x: x[1], reverse=True)
     print(words_freq)
+    print(bag_of_words.toarray())
 
 if __name__ == "__main__":
     main()
