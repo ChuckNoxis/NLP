@@ -79,6 +79,7 @@ def cleanText(text):
     return (filtered_text);
 
 def createBackup(url_list, backup_file):
+    pages_dict = {};
     for url in url_list:
         pages_dict[url] = getDivContent(downloadURL(url));
     pickleFile(backup_file, pages_dict);
@@ -117,6 +118,27 @@ def createWordClouds(words_dict):
         else:
             print("Cloud of words is already existing for", name);
 
+def createUniqueWordCounter(words_dict):
+    filename = "./outputs/UniqueWordsCount.png"
+    print("Creating a unique word counter file.");
+    names_list = [];
+    counter = [];
+    rgx = re.compile(r'(^\w+-\w+)');
+    for name, content in words_dict.items():
+        name = str(rgx.findall(name)[0]);
+        names_list.append(name);
+        counter.append(len(set(content.split())));
+    # counter.sort(reverse=True);
+    # names_list.sort(reverse=True);
+    fig, ax = plt.subplots();
+    ax.barh(names_list, counter, align='center');
+    ax.set_yticks(names_list);
+    ax.set_yticklabels(names_list);
+    ax.invert_yaxis();  # labels read top-to-bottom
+    ax.set_title('Number of Unique Words');
+    plt.savefig(filename);
+    print("Unique words counter saved in file", filename);
+
 def main():
     url_list = readFile("url_list.txt");
     backup_file = 'downloaded_pages.backup';
@@ -141,8 +163,7 @@ def main():
         words_dict[url_name] = text_words;
 
     createWordClouds(words_dict);
-    # print("Single world counter in", name);
-    # print(len(set(content.split())));
+    createUniqueWordCounter(words_dict);
     # print(len(content.split()) / 100)
     # print("F Words :", content.count("fuck") + content.count("fucking"));
     # print("S Words :", content.count("shit"));
