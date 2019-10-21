@@ -58,7 +58,7 @@ def getDivContent(page):
     return (post_content);
 
 def cleanText(text):
-    print("Cleaning Text");
+    # print("Cleaning Text");
     text = text.lower(); #Lowercase Text
     text = re.sub(r'<\/?[\w ="-:;]*>', '', text); #Remove HTML Tags
     text = re.sub(r'-', ' ', text); #Replace - by space
@@ -75,7 +75,7 @@ def cleanText(text):
     for i in range(len(tokenized_text)):
         if not tokenized_text[i] in stop_words:
             filtered_text.append(tokenized_text[i]);
-    print("Text cleaned.");
+    # print("Text cleaned.");
     return (filtered_text);
 
 def createBackup(url_list, backup_file):
@@ -102,16 +102,20 @@ def getUrlName(url):
     rgx = re.search('https?:\/\/scrapsfromtheloft\.com\/\d{4}\/(\d{2}\/){2}([\w\-]*)\/', url);
     return (rgx.group(2));
 
-def createWordCloud(content, filename):
-    print("Creating a Cloud of words for url :", filename);
+def createWordClouds(words_dict):
     stopwords = set(STOPWORDS);
-    filename = "./outputs/" + filename + ".png"
-    wordcloud = WordCloud(width = 800, height = 800,
-                background_color = 'white',
-                stopwords = stopwords,
-                min_font_size = 10).generate(content);
-    wordcloud.to_file(filename);
-    print("Cloud of words saved in file", filename);
+    for name, content in words_dict.items():
+        filename = "./outputs/" + name + ".png"
+        if not os.path.exists(filename):
+            print("Creating a cloud of words for", name);
+            wordcloud = WordCloud(width = 800, height = 800,
+                                  background_color = 'white',
+                                  stopwords = stopwords,
+                                  min_font_size = 10).generate(content);
+            wordcloud.to_file(filename);
+            print("Cloud of words saved in file", filename);
+        else:
+            print("Cloud of words is already existing for", name);
 
 def main():
     url_list = readFile("url_list.txt");
@@ -129,21 +133,19 @@ def main():
     for url, content in pages_dict.items():
         text_words = "";
         url_name = getUrlName(url);
-        print("Treating page :", url_name);
+        print("Cleaning text for", url_name);
         content = cleanText(content);
         pages_dict[url] = content;
         for content_item in content:
             text_words += content_item + " "
         words_dict[url_name] = text_words;
 
-    for name, content in words_dict.items():
-        if not os.path.exists("./outputs/" + name + ".png"):
-            createWordCloud(content, name);
-        else:
-            print("Cloud of words is already existing.");
-        print("Single world counter in", name);
-        print(len(set(content.split())));
-        # print(len())
+    createWordClouds(words_dict);
+    # print("Single world counter in", name);
+    # print(len(set(content.split())));
+    # print(len(content.split()) / 100)
+    # print("F Words :", content.count("fuck") + content.count("fucking"));
+    # print("S Words :", content.count("shit"));
 
 if __name__ == "__main__":
     main();
