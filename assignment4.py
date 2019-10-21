@@ -132,12 +132,56 @@ def createUniqueWordCounter(words_dict):
     # names_list.sort(reverse=True);
     fig, ax = plt.subplots();
     ax.barh(names_list, counter, align='center');
+    plt.title('Number of Unique Words');
     ax.set_yticks(names_list);
     ax.set_yticklabels(names_list);
     ax.invert_yaxis();  # labels read top-to-bottom
-    ax.set_title('Number of Unique Words');
     plt.savefig(filename);
     print("Unique words counter saved in file", filename);
+
+def createWordsPerMinute(words_dict):
+    filename = "./outputs/WordsPerMinute.png"
+    print("Creating a Words Per Minute file.");
+    names_list = [];
+    counter = [];
+    rgx = re.compile(r'(^\w+-\w+)');
+    for name, content in words_dict.items():
+        name = str(rgx.findall(name)[0]);
+        names_list.append(name);
+        counter.append(len(content.split()) / 100);
+    fig, ax = plt.subplots();
+    ax.barh(names_list, counter, align='center');
+    plt.title('Number of Words Per Minute');
+    ax.set_yticks(names_list);
+    ax.set_yticklabels(names_list);
+    ax.invert_yaxis();  # labels read top-to-bottom
+    plt.savefig(filename);
+    print("Words Per Minute saved in file", filename);
+
+def createBadWords(words_dict):
+    filename = "./outputs/BadWords.png"
+    print("Creating a bad words counter file.");
+    names_list = [];
+    f = [];
+    s = [];
+    rgx = re.compile(r'(^\w+-\w+)');
+    for name, content in words_dict.items():
+        name = str(rgx.findall(name)[0]);
+        names_list.append(name);
+        f.append(content.count("fuck") + content.count("fucking"));
+        s.append(content.count("shit"));
+    fig, ax = plt.subplots();
+    plt.title('Number of Bad Words Used in Routine');
+    plt.xlabel('Number of F Bombs');
+    plt.ylabel('Number of S Words');
+    # for url, cont in words_dict.items():
+    #     plt.text(f, s, names_list);
+    for i, name in enumerate(names_list):
+        plt.text(f[i] + 2, s[i] + 1, name)
+    # ax.grid(True);
+    plt.scatter(f, s);
+    plt.savefig(filename);
+    print("Bad words counter saved in file", filename);
 
 def main():
     url_list = readFile("url_list.txt");
@@ -164,9 +208,8 @@ def main():
 
     createWordClouds(words_dict);
     createUniqueWordCounter(words_dict);
-    # print(len(content.split()) / 100)
-    # print("F Words :", content.count("fuck") + content.count("fucking"));
-    # print("S Words :", content.count("shit"));
+    createWordsPerMinute(words_dict);
+    createBadWords(words_dict);
 
 if __name__ == "__main__":
     main();
